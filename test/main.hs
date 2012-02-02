@@ -127,6 +127,13 @@ main = hspecX $ do
         it "not a link" $ check
             "<p>Not a [ link</p>"
             "Not a [ link"
+    describe "images" $ do
+        it "simple" $ check
+            "<img src=\"/something/something.png\" alt=\"Alt text\">"
+            "![Alt text](/something/something.png)"
+        it "escaped" $ check
+            "<img src=\"/something/something.png\" alt=\"Alt &amp; text\">"
+            "![Alt & text](/something/something.png)"
     describe "rules" $ do
         let options = concatMap (\t -> [t, snoc t '\n'])
                 [ "* * *"

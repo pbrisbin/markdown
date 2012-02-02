@@ -89,6 +89,7 @@ parser ms =
     <|> hashheads <|> underheads
     <|> codeblock
     <|> blockquote
+    <|> images
     <|> bullets
     <|> numbers
     <|> para
@@ -158,6 +159,16 @@ parser ms =
 
     blockquote = H.blockquote . markdown ms . TL.fromChunks . intersperse "\n"
              <$> many1 blockedLine
+
+    images = try $ do
+        _ <- char '!'
+        _ <- char '['
+        a <- toValue <$> takeWhile (/= ']')
+        _ <- char ']'
+        _ <- char '('
+        s <- toValue <$> many1 hrefChar
+        _ <- char ')'
+        return $ H.img ! HA.src s ! HA.alt a
 
     bullets = H.ul . mconcat <$> many1 (bullet ms)
     numbers = H.ol . mconcat <$> many1 (number ms)
